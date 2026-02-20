@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+
+<robot
+  name="pendulum" xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find pendulum_description)/urdf/pendulum_gazebo.xacro" />
+  <xacro:include filename="$(find pendulum_description)/urdf/pendulum_ros2_control.xacro" />
+
+  <link name="base_footprint"/>
+
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="6.36331745104857E-16 -0.226629032258064 -0.5"
+        rpy="0 0 0" />
+      <mass
+        value="135.625" />
+      <inertia
+        ixx="120.66933800235214"
+        ixy="-8.34457950766646E-16"
+        ixz="1.68593437821496E-14"
+        iyy="121.983188541667"
+        iyz="-1.53839894452422E-15"
+        izz="128.712191127352" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+    <!-- <gazebo>static: true</gazebo> -->
+  </link>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link" />
+    <origin xyz="0 0 0.8" rpy="0 0 0"/>
+  </joint>
+
+  <link
+    name="cart_link">
+    <inertial>
+      <origin
+        xyz="0.164307811287998 0.0220987949533505 0.134063268805466"
+        rpy="0 0 0" />
+      <mass
+        value="7.51020537336025" />
+      <inertia
+        ixx="0.0908570873245677"
+        ixy="0.000609128603190611"
+        ixz="-0.00131456683820482"
+        iyy="0.185704807269383"
+        iyz="0.000256709228024828"
+        izz="0.128763787648094" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/cart_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.690196078431373 0.509803921568627 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/cart_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="cart_joint"
+    type="prismatic">
+    <origin
+      xyz="0 0.135 0.1"
+      rpy="1.5708 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="cart_link" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1"
+      upper="1"
+      effort="100"
+      velocity="10" />
+  </joint>
+  <link
+    name="wheel_shaft_link">
+    <inertial>
+      <origin
+        xyz="0 -8.02982279374809E-05 0.12"
+        rpy="0 0 0" />
+      <mass
+        value="0.0513755963547227" />
+      <inertia
+        ixx="0.000248479590131815"
+        ixy="5.0821976835258E-21"
+        ixz="-6.30936505837719E-21"
+        iyy="0.00024849053286373"
+        iyz="3.09069487800563E-20"
+        izz="2.26317990207106E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/wheel_shaft_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.529411764705882 0.549019607843137 0.549019607843137 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/wheel_shaft_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel_shaft_joint"
+    type="continuous">
+    <origin
+      xyz="0.16755 -0.04 0.015"
+      rpy="0 0 -0.11686" />
+    <parent
+      link="cart_link" />
+    <child
+      link="wheel_shaft_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="wheel_link">
+    <inertial>
+      <origin
+        xyz="-2.77555756156289E-17 7.27512519449469E-07 0.02"
+        rpy="0 0 0" />
+      <mass
+        value="0.219522857968325" />
+      <inertia
+        ixx="0.000279345890325254"
+        ixy="-2.03287907341032E-20"
+        ixz="9.16740630550692E-20"
+        iyy="0.000279345523578527"
+        iyz="-2.89498400182015E-19"
+        izz="0.000519872498983051" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="wheel_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 0.1"
+      rpy="0 0 0" />
+    <parent
+      link="wheel_shaft_link" />
+    <child
+      link="wheel_link" />
+
+  </joint>
+  <link
+    name="pendulum_shaft_link">
+    <inertial>
+      <origin
+        xyz="-3.26172092113275E-09 -9.4628805232283E-05 -0.011847861273337"
+        rpy="0 0 -1.5708" />
+      <mass
+        value="0.274631062675936" />
+      <inertia
+        ixx="7.16968521355364E-05"
+        ixy="1.6082318495927E-11"
+        ixz="-1.54635176865287E-11"
+        iyy="7.20225194163355E-05"
+        iyz="-5.23183126573732E-07"
+        izz="3.07208743781879E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 -1.5708" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/pendulum_shaft_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/pendulum_shaft_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="pendulum_shaft_joint"
+    type="continuous">
+    <origin
+      xyz="0.167545451297984 0.0375 0"
+      rpy="0 0 1.5708" />
+    <parent
+      link="cart_link" />
+    <child
+      link="pendulum_shaft_link" />
+    <axis
+      xyz="0 0 1" />
+    <!-- <dynamics damping="0.1"/> -->
+  </joint>
+  <link
+    name="pendulum_shaft">
+    <inertial>
+      <origin
+        xyz="0 -.566 0.00499999999999984"
+        rpy="0 0 -1.57" />
+      <mass
+        value="0.207156317748298" />
+      <inertia
+        ixx="0.00805828372968201"
+        ixy="5.11607900141597E-19"
+        ixz="-1.85132047112081E-20"
+        iyy="2.26802133368564E-05"
+        iyz="-5.36591259051731E-18"
+        izz="0.00807751133772306" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0.566 0 0"
+        rpy="0 0 -1.57" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/pendulum_shaft.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.968627450980392 0.258823529411765 0.258823529411765 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="file://$(find pendulum_description)/meshes/pendulum_shaft.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="pendulum_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 -0.0369999999999996"
+      rpy="0 0 0" />
+    <parent
+      link="pendulum_shaft_link" />
+    <child
+      link="pendulum_shaft" />
+  </joint>
+
+  <link name='imu_link'>
+    <inertial>
+      <origin xyz="-0.00552433659106688 0.000168210391520346 0.000514000497342681" rpy="0 0 0" />
+      <mass value="0.000528415362211671" />
+      <inertia ixx="1.46176048428261E-05" ixy="0" ixz="0"
+               iyy="8.59662482954888E-05" iyz="0"
+               izz="2.30279421279312E-05" />
+    </inertial>
+    <visual>
+      <geometry>
+        <box size="0.02 0.02 0.01"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint
+    name='imu_joint'
+    type='fixed'>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="pendulum_shaft" />
+    <child link="imu_link" />
+  </joint>
+
+
+</robot>

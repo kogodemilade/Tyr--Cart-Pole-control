@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="pendulum">
+
+    <transmission name="wheel_transmission">
+        <plugin>transmission_interface/SimpleTransmission</plugin>
+        <actuator name="wheel_motor" role="actuator"/>
+        <joint name="wheel_joint" role="wheel_joint">
+            <mechanical_reduction>1.0</mechanical_reduction>
+        </joint>
+    </transmission>
+
+    <gazebo reference="base_link">
+        <material>Gazebo/Red</material>
+    </gazebo>
+    <gazebo reference="wheel_link">
+        <mu1>100000000000000.0</mu1>
+        <mu2>100000000000000.0</mu2>
+        <kp>1000000000000.0</kp>
+        <kd>10.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>0.1</maxVel>
+        <fdir1>1 0 0</fdir1>
+        <material>Gazebo/Red</material>
+    </gazebo>
+
+    <gazebo>
+        <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <robot_param>robot_description</robot_param>
+            <robot_param_node>robot_state_publisher</robot_param_node>
+            <parameters>$(find invpendulum_control)/config/pendulum_controller.yaml</parameters>
+        </plugin>
+    </gazebo>
+
+    <gazebo reference='imu_link'>
+        <sensor name='imu_link' type='imu'>
+            <always_on>1</always_on>
+            <update_rate>100</update_rate>
+            <topic>imu</topic>
+            <visualize>true</visualize>
+            <plugin filename="gz-sim-imu-system"
+                name="gz::sim::systems::Imu">
+            </plugin>
+            <imu>
+                <angular_velocity>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-2</stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-2</stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-2</stddev>
+                        </noise>
+                    </z>
+                </angular_velocity>
+            </imu>
+            
+        </sensor>
+    </gazebo>
+
+</robot>

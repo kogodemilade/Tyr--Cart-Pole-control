@@ -1,0 +1,7 @@
+log/
+build/
+install/
+/.vscode
+gitignore
+**/.vscode/
+**/*.db
