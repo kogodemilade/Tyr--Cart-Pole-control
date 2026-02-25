@@ -41,8 +41,27 @@ def generate_launch_description():
 
     pendulum_length_arg = DeclareLaunchArgument(
         "pendulum_length",
-        default_value="0.17",
+        default_value="0.56",
         description="Distance between the center of both wheels."
+    )
+
+
+    kp_arg = DeclareLaunchArgument(
+        "kp",
+        default_value="10.0",
+        description="Proportional gain"
+    )
+
+    kd_arg = DeclareLaunchArgument(
+        "kd",
+        default_value="3.0",
+        description="Derivative gain"
+    )
+
+    ki_arg = DeclareLaunchArgument(
+        "ki",
+        default_value="1.0",
+        description="Integral gain"
     )
 
     # wheel_radius_err = DeclareLaunchArgument(
@@ -60,6 +79,9 @@ def generate_launch_description():
     
     wheel_radius = LaunchConfiguration("wheel_radius")
     pendulum_length = LaunchConfiguration("pendulum_length")
+    kp = LaunchConfiguration("kp")
+    kd = LaunchConfiguration("kd")
+    ki = LaunchConfiguration("ki")
     
     joint_state_broadcaster_spawner = Node(
         package='controller_manager',
@@ -74,11 +96,18 @@ def generate_launch_description():
                 arguments=['velocity_controller', '--controller-manager', '/controller_manager'],
                 parameters=[{'use_sim_time': True}]
             )
+    
+    effort_controller = Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=['effort_controller', '--controller-manager', '/controller_manager'],
+            parameters=[{'use_sim_time': True}]
+        )
 
     pendulum_controller = Node(
                 package="invpendulum_control",
                 executable="controller",
-                parameters=[{"wheel_radius": wheel_radius, "pendulum_length": pendulum_length}, {'use_sim_time': True}]
+                parameters=[{"wheel_radius": wheel_radius, "pendulum_length": pendulum_length, "kp": kp, "kd": kd, "ki": ki}, {'use_sim_time': True}]
             )
 
 
@@ -94,10 +123,14 @@ def generate_launch_description():
     # ld.add_action(use_python_arg)
     ld.add_action(wheel_radius_arg)
     ld.add_action(pendulum_length_arg)
+    ld.add_action(kp_arg)
+    ld.add_action(kd_arg)
+    ld.add_action(ki_arg)
     # ld.add_action(wheel_radius_err)
     # ld.add_action(wheel_sep_err)
     ld.add_action(joint_state_broadcaster_spawner)
-    ld.add_action(velocity_controller)
+    ld.add_action(effort_controller)
+    # ld.add_action(velocity_controller)
     # ld.add_action(noisy_controller_)
     ld.add_action(pendulum_controller)
     return ld

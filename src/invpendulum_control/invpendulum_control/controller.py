@@ -18,10 +18,10 @@ class Controller(Node):
         super().__init__("pendulum_controller")
 
         self.declare_parameter("wheel_radius", 0.01) #Check and change
-        self.declare_parameter("pendulum_length", 0.6) #Check and change
-        self.declare_parameter("kp", 0.1)
-        self.declare_parameter("kd", 0.01)
-        self.declare_parameter("ki", 1)
+        self.declare_parameter("pendulum_length", 0.566) #Check and change
+        self.declare_parameter("kp", 12.0)
+        self.declare_parameter("kd", 1.0)
+        self.declare_parameter("ki", 3.0)
 
         self.wheel_radius = self.get_parameter("wheel_radius").get_parameter_value().double_value
         self.pendulum_length = self.get_parameter("pendulum_length").get_parameter_value().double_value
@@ -30,7 +30,7 @@ class Controller(Node):
         self.kd = self.get_parameter("kd").get_parameter_value().double_value
         self.ki = self.get_parameter("ki").get_parameter_value().double_value
 
-        self.signal_gain = 15
+        self.signal_gain = 70
         
         self.prev_time = self.get_clock().now()
         self.pole_angle = 0.0
@@ -42,7 +42,11 @@ class Controller(Node):
         self.prev_pole_angle = 0.0
         self.cumulative_error = 0.0
 
-        self.wheel_cmd_pub = self.create_publisher(Float64MultiArray, "velocity_controller/commands", 10)
+        self.force_gain = 10e0
+
+        # self.wheel_cmd_pub = self.create_publisher(Float64MultiArray, "velocity_controller/commands", 10)
+        self.swing_up_pub = self.create_publisher(Float64MultiArray, "effort_controller/commands", 10)
+
         self.get_logger().info('Created cart command publisher node')
         self.joint_sub = self.create_subscription(JointState, "joint_states", self.jointCallback, 10)
         self.get_logger().info('Created joint states subscriber node')
@@ -52,6 +56,7 @@ class Controller(Node):
         self.transform.header.frame_id = "odom"
         self.transform.child_frame_id = "base_footprint"
         self.i = 0
+        self.start_time = self.get_clock().now()
 
 
     
@@ -85,31 +90,57 @@ class Controller(Node):
         if dt == 0:
             return
 
-
-        # derivative = (self.pole_angle - self.prev_pole_angle)/dt
-        derivative = self.pole_velocity
-        # self.prev_pole_angle = self.pole_angle
-        self.cumulative_error += self.pole_angle*dt
+        # if (self.get_clock().now() - self.start_time).nanoseconds/ S_TO_NS < 10:
+        #     self.command.data = [0.0]
+        #     self.temp_pendulum_pub.publish(self.command)
+        #     return
         
-        proportional_ = self.kp*self.pole_angle
-        integral_ = np.clip(self.ki*self.cumulative_error, -1.0, 1.0)
-        derivative_ = self.kd*derivative
 
-        signal = proportional_+integral_+derivative_
+        if abs(self.pole_angle) < 0.2: #PID controller
+            self.get_logger().info("Using pid")
+            # derivative = (self.pole_angle - self.prev_pole_angle)/dt
+            derivative = self.pole_velocity
+            # self.prev_pole_angle = self.pole_angle
+            self.cumulative_error += self.pole_angle*dt
+            
+            proportional_ = self.kp*self.pole_angle
+            integral_ = np.clip(self.ki*self.cumulative_error, -1.0, 1.0)
+            derivative_ = self.kd*derivative
 
-        signal *= self.signal_gain
-        self.command.data = [-signal]
+            signal = proportional_+integral_+derivative_
+
+            final_signal = -signal*self.signal_gain*self.force_gain
+            self.command.data = [final_signal]
+            self.swing_up_pub.publish(self.command)
+            # self.get_logger().info(f"adjusting signal:  {final_signal}", )
+            # self.get_logger().info(f"proportional:  {proportional_}", )
+            # self.get_logger().info(f"integral:  {integral_}", )
+            # self.get_logger().info(f"der:  {derivative_}", )
+            # self.get_logger().info(f"pole angle:  {self.pole_angle}", )
+            # self.get_logger().info(f"kp:  {self.kp}", )
+            # self.get_logger().info(f"kd:  {self.kd}", )
+            # self.get_logger().info(f"ki:  {self.ki}", )
+
+
+
+        
+        else: #Swing up controller using energy shaping
+            Energy = (0.5*(self.pendulum_length**2)*(self.pole_velocity**2)) + (9.81*self.pendulum_length*(1- math.cos(self.pole_angle)))
+            force = -self.force_gain *Energy *self.pole_velocity*math.cos(self.pole_angle)
+            self.command.data = [force]
+            self.swing_up_pub.publish(self.command)
+            # self.get_logger().info(f"signal: {force}")
+        
 
         if self.i % 400 == 0:
-            self.i == 0
+            self.i = 0
             self.get_logger().info(f"pole angle:  {self.pole_angle}", )
 
             self.get_logger().info(f"adjusting signal:  {self.command.data}", )
 
-        self.wheel_cmd_pub.publish(self.command)
+            
         self.i += 1
-        
-        
+
 
 def main():
     rclpy.init()
