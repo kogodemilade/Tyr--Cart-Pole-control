@@ -48,19 +48,19 @@ def generate_launch_description():
 
     kp_arg = DeclareLaunchArgument(
         "kp",
-        default_value="10.0",
+        default_value="18.2",
         description="Proportional gain"
     )
 
     kd_arg = DeclareLaunchArgument(
         "kd",
-        default_value="3.0",
+        default_value="5.0",
         description="Derivative gain"
     )
 
     ki_arg = DeclareLaunchArgument(
         "ki",
-        default_value="1.0",
+        default_value="1.8",
         description="Integral gain"
     )
 

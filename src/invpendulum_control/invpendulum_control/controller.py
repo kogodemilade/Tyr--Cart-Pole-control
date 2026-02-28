@@ -11,6 +11,7 @@ import math
 from nav_msgs.msg import Odometry
 from tf_transformations import quaternion_from_euler
 from tf2_ros import TransformBroadcaster
+import random
 
 
 class Controller(Node):
@@ -21,7 +22,7 @@ class Controller(Node):
         self.declare_parameter("pendulum_length", 0.566) #Check and change
         self.declare_parameter("kp", 12.0)
         self.declare_parameter("kd", 1.0)
-        self.declare_parameter("ki", 3.0)
+        self.declare_parameter("ki", 4.0)
 
         self.wheel_radius = self.get_parameter("wheel_radius").get_parameter_value().double_value
         self.pendulum_length = self.get_parameter("pendulum_length").get_parameter_value().double_value
@@ -30,7 +31,7 @@ class Controller(Node):
         self.kd = self.get_parameter("kd").get_parameter_value().double_value
         self.ki = self.get_parameter("ki").get_parameter_value().double_value
 
-        self.signal_gain = 70
+        self.signal_gain = 10
         
         self.prev_time = self.get_clock().now()
         self.pole_angle = 0.0
@@ -45,10 +46,10 @@ class Controller(Node):
         self.force_gain = 10e0
 
         # self.wheel_cmd_pub = self.create_publisher(Float64MultiArray, "velocity_controller/commands", 10)
-        self.swing_up_pub = self.create_publisher(Float64MultiArray, "effort_controller/commands", 10)
+        self.swing_up_pub = self.create_publisher(Float64MultiArray, "effort_controller/commands", 100)
 
         self.get_logger().info('Created cart command publisher node')
-        self.joint_sub = self.create_subscription(JointState, "joint_states", self.jointCallback, 10)
+        self.joint_sub = self.create_subscription(JointState, "joint_states", self.jointCallback, 100)
         self.get_logger().info('Created joint states subscriber node')
 
         self.br = TransformBroadcaster(self)
@@ -61,11 +62,13 @@ class Controller(Node):
 
     
     def jointCallback(self, msg):
+        # poison = random.random()*0.1
+        poison = 0
         cart_index= msg.name.index("cart_joint")
-        cart_position = msg.position[cart_index]
+        cart_position = msg.position[cart_index]+poison
         self.cart_position = cart_position
 
-        self.cart_velocity = msg.velocity[cart_index]
+        self.cart_velocity = msg.velocity[cart_index]+poison
 
         # AngularVel = msg.velocity[cart_index]
         # self.cart_velocity = self.wheel_radius*AngularVel 
@@ -73,8 +76,8 @@ class Controller(Node):
 
 
         pole_index= msg.name.index("pendulum_shaft_joint")
-        self.pole_angle = msg.position[pole_index]
-        self.pole_velocity = msg.velocity[pole_index]
+        self.pole_angle = msg.position[pole_index]+poison
+        self.pole_velocity = msg.velocity[pole_index]+poison
 
         # self.pole
         # self.sign = self
@@ -96,7 +99,7 @@ class Controller(Node):
         #     return
         
 
-        if abs(self.pole_angle) < 0.2: #PID controller
+        if abs(self.pole_angle) < 0.3: #PID controller
             self.get_logger().info("Using pid")
             # derivative = (self.pole_angle - self.prev_pole_angle)/dt
             derivative = self.pole_velocity
@@ -104,7 +107,7 @@ class Controller(Node):
             self.cumulative_error += self.pole_angle*dt
             
             proportional_ = self.kp*self.pole_angle
-            integral_ = np.clip(self.ki*self.cumulative_error, -1.0, 1.0)
+            integral_ = np.clip(self.ki*self.cumulative_error, -5.0, 5.0)
             derivative_ = self.kd*derivative
 
             signal = proportional_+integral_+derivative_
@@ -122,14 +125,13 @@ class Controller(Node):
             # self.get_logger().info(f"ki:  {self.ki}", )
 
 
-
         
         else: #Swing up controller using energy shaping
             Energy = (0.5*(self.pendulum_length**2)*(self.pole_velocity**2)) + (9.81*self.pendulum_length*(1- math.cos(self.pole_angle)))
             force = -self.force_gain *Energy *self.pole_velocity*math.cos(self.pole_angle)
             self.command.data = [force]
             self.swing_up_pub.publish(self.command)
-            # self.get_logger().info(f"signal: {force}")
+            # self.get_logger().info(f"signal: {force}")r
         
 
         if self.i % 400 == 0:

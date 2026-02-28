@@ -16,7 +16,7 @@
     <inertial>
       <origin
         xyz="6.36331745104857E-16 -0.226629032258064 -0.5"
-        rpy="0 0 0" />
+        rpy="0 0 1.5708" />
       <mass
         value="135.625" />
       <inertia
@@ -274,7 +274,7 @@
       link="pendulum_shaft_link" />
     <axis
       xyz="0 0 1" />
-    <dynamics damping="0.001"/>
+    <dynamics damping="0.01"/>
   </joint>
   <link
     name="pendulum_shaft">
