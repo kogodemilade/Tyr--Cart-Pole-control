@@ -12,7 +12,7 @@ found in the src\pendulum\description\meshes directory. The MATLAB system design
 
 ## MATLAB
 ### Mathematical Modelling 
-![Cart-pole](images\cartpole.jpg)
+![Cart-pole](images\cartpole.png)
 (Image adopted from [Russ Tedrake's Underactuated Robotics](https://underactuated.mit.edu/) lecture notes)
 
 
