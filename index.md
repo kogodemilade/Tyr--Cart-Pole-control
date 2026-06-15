@@ -206,7 +206,7 @@ The parameters used are:
 where diag() represents a diagonal matrix with its values being the values on the matrix's main diagonal axis.
 
 ##Insert image of matlab code
-![matlab](images/matlab.jpg)
+![matlab](images/matlab.png)
 
 Running the code produces the *Optimal Gains Vector*, K = 
 
@@ -214,15 +214,15 @@ The Simulink diagram is a direct implementation of canonical feedback stabilizat
 There are surely better ways to simulate random noise, but this seems to solve the problem.
 
 ##Insert image of simulink diagram
-![simulink](images/simulink.jpg)
+![simulink](images/simulink.png)
 
 <h3 align="center"> Output over a 60 second time period</h3>
 ##Insert image of simulink output
-![response](images/response.jpg)
+![response](images/response.png)
 
 <h3 align="center">Output without noise</h3>
 ##Insert image without noise
-![de-noised response](images/denoise_response.jpg)
+![de-noised response](images/denoised_response.png)
 
 
 
@@ -240,9 +240,6 @@ $$k_p = 12.0$$
 $$k_d = 1.0$$
 $$k_i = 4.0$$
 The result  of the signal having passed through the pid gains was multiplied by a system gain $$k=10x10^5$$.
-
-##Insert image of pid block diagram
-![pid_block](images/pid_block.jpg)
 
 
 <h3 align="center">LQR Controller</h3>
