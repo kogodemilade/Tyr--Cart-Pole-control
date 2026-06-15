@@ -205,23 +205,22 @@ The parameters used are:
 
 where diag() represents a diagonal matrix with its values being the values on the matrix's main diagonal axis.
 
-##Insert image of matlab code
+
 ![matlab](images/matlab.png)
 
-Running the code produces the *Optimal Gains Vector*, K = 
+Running the code produces the *Optimal Gains Vector*, K = \[-6.32 -10.30 103.54 34.05]
 
 The Simulink diagram is a direct implementation of canonical feedback stabilization, with some subtle additions. The output of the states are fed back as inputs to the states after passing through some gain matrix/vector. The diagram also includes 2 additions, which are random number generators multiplied by a unit step, to simulate sensor and process noise, to test the robustness of the controller. 
 There are surely better ways to simulate random noise, but this seems to solve the problem.
 
-##Insert image of simulink diagram
 ![simulink](images/simulink.png)
 
 <h3 align="center"> Output over a 60 second time period</h3>
-##Insert image of simulink output
 ![response](images/response.png)
 
+The orange line represents the pole angle, and the yellow line represents the cart position. The pole angle ranges from about -0.01 to +0.01 rad (-0.6 to +0.6 degrees).
+
 <h3 align="center">Output without noise</h3>
-##Insert image without noise
 ![de-noised response](images/denoised_response.png)
 
 
