@@ -10,7 +10,6 @@ This project is a simulation utilizing ROS2 and Gazebo Sim. This is intended to 
 This project can be split into 3 parts: the stl files creation, the matlab system design and the ros implementation. The CAD files were designed for quick simulation and can be 
 found in the src\pendulum\description\meshes directory. The MATLAB system design and ROS implementation are discussed below.
 
-<a name=matlab\>
 ## MATLAB
 ### Mathematical Modelling 
 ![Cart-pole](images\cartpole.jpg)
