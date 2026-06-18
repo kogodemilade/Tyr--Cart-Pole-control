@@ -206,6 +206,7 @@ The parameters used are:
 where diag() represents a diagonal matrix with its values being the values on the matrix's main diagonal axis.
 
 
+![matlab](images/matlab.png)
 
 Running the code produces the *Optimal Gains Vector*, K = [-6.32 -10.30 103.54 34.05].
 
@@ -217,6 +218,7 @@ There are surely better ways to simulate random noise, but this seems to solve t
 
 <h3 align="center"> Output over a 60 second time period</h3>
 ![response](images/response.png)
+
 
 The orange line represents the pole angle, and the yellow line represents the cart position. The pole angle ranges from about -0.01 to +0.01 rad (-0.6 to +0.6 degrees).
 
