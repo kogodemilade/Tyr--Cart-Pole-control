@@ -196,17 +196,16 @@ $$
 <Matlab Programming and Simulink Simulation>
 Now that we have the model, the next step is to model it in MATLAB and Simulink. One might have noticed that this model has been derived without friction terms. This is deliberate as friction terms are usually small enough that they are negligible, but they may be added in future releases. The code involves declaring the A (state transition matrix) and B (input matrix) matrices, and the C and D matrices (from the Output Equation in canonical state-space representation. For now, state observation techniques are not employed for simplicity while debugging, but will be integrated in future releases. Due to that, C amtrix is a 4x4 Identity matrix (meaning all states are measured directly). The D matrix is 0.
 The parameters used are:
-- $$l = 1.2m$$
-- $$m_c = 2.0kg$$
-- $$m_p = 0.48kg$$
-- $$g =  $9.81 \, \text{ms}^{-2}$$
-- Q = diag([20 2 150 2])
-- $$r = 0.1$$
+ $$l = 1.2m$$
+ $$m_c = 2.0kg$$
+ $$m_p = 0.48kg$$
+ $$g =  $9.81 \, \text{ms}^{-2}$$
+ $$Q = diag([20, 2, 150, 2])$$
+ $$r = 0.1$$
 
 where diag() represents a diagonal matrix with its values being the values on the matrix's main diagonal axis.
 
 
-![matlab](images/matlab.png)
 
 Running the code produces the *Optimal Gains Vector*, K = [-6.32 -10.30 103.54 34.05].
 
@@ -249,5 +248,5 @@ The Q matrix and r scalar are not so sensitive to change. The main consideration
 
 
 <h3 align="center">Gazebo simulation</h3>
-Ensuring the weights were as close to assumptions as possible was a bit tricky. For example, the conter of mass is assumed to be at the tip, with the pole being massless. This required me to create two separate STL files, one for the tip and the other for the pole, and using different materials to achieve that effect. I first considered making the pole's center of mass such that it corresponds with the height of the tip. This wouldn't have worked as there were still huge moment issues that persist. While the dimensions and weights do not correspond exactly with those stated in the matlab file, it falls in $$\pm{10%}$$ within the nominal values, which is tight enough that LQR can stabilize without any problems.
+Ensuring the weights were as close to assumptions as possible was a bit tricky. For example, the conter of mass is assumed to be at the tip, with the pole being massless. This required me to create two separate STL files, one for the tip and the other for the pole, and using different materials to achieve that effect. I first considered making the pole's center of mass such that it corresponds with the height of the tip. This wouldn't have worked as there were still huge moment issues that persist. While the dimensions and weights do not correspond exactly with those stated in the matlab file, it falls in $$\pm 10 \%$$ within the nominal values, which is tight enough that LQR can stabilize without any problems.
 The swing up controller is still undergoing development and is not yet functional. Due to that, the gazebo launch and controller launch files are launched in quick succession to ensure the controller starts while the pole is still upright or near it. 
