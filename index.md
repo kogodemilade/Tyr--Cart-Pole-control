@@ -196,11 +196,11 @@ $$
 <Matlab Programming and Simulink Simulation>
 Now that we have the model, the next step is to model it in MATLAB and Simulink. One might have noticed that this model has been derived without friction terms. This is deliberate as friction terms are usually small enough that they are negligible, but they may be added in future releases. The code involves declaring the A (state transition matrix) and B (input matrix) matrices, and the C and D matrices (from the Output Equation in canonical state-space representation. For now, state observation techniques are not employed for simplicity while debugging, but will be integrated in future releases. Due to that, C amtrix is a 4x4 Identity matrix (meaning all states are measured directly). The D matrix is 0.
 The parameters used are:
-- $$l$$ = 1.2m
-- $$m_c$$ = 2.0kg
-- $$m_p$$ = 0.48kg
-- $$g$$ =  $9.81 \, \text{ms}^{-2}$
-- $$Q = diag([20 2 150 2])$$
+- $$l = 1.2m$$
+- $$m_c = 2.0kg$$
+- $$m_p = 0.48kg$$
+- $$g =  $9.81 \, \text{ms}^{-2}$$
+- Q = diag([20 2 150 2])
 - $$r = 0.1$$
 
 where diag() represents a diagonal matrix with its values being the values on the matrix's main diagonal axis.
@@ -208,7 +208,8 @@ where diag() represents a diagonal matrix with its values being the values on th
 
 ![matlab](images/matlab.png)
 
-Running the code produces the *Optimal Gains Vector*, K = \[-6.32 -10.30 103.54 34.05]
+Running the code produces the *Optimal Gains Vector*, K = [-6.32 -10.30 103.54 34.05].
+
 
 The Simulink diagram is a direct implementation of canonical feedback stabilization, with some subtle additions. The output of the states are fed back as inputs to the states after passing through some gain matrix/vector. The diagram also includes 2 additions, which are random number generators multiplied by a unit step, to simulate sensor and process noise, to test the robustness of the controller. 
 There are surely better ways to simulate random noise, but this seems to solve the problem.
